@@ -5,13 +5,13 @@ Shopping List is a simple desktop app in Electron that lets you make a shopping 
 ![Add an item](/assets/docs/add.png)
 ![Show the list](/assets/docs/list.png)
 
-# To run
+## To run
 
 ```bash
 $ npm start
 ```
 
-# To package the app
+## To package the app
 
 ```bash
 # Windows
