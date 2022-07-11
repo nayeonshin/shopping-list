@@ -8,7 +8,7 @@ Shopping List is a simple desktop app in Electron that lets you make a shopping 
 ## To run
 
 ```bash
-$ npm start
+$ npm i && npm start
 ```
 
 ## To package the app
