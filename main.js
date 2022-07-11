@@ -2,7 +2,7 @@ const electron = require("electron");
 const url = require("url");
 const path = require("path");
 
-const { app, BrowserWindow, Menu } = electron;
+const { app, BrowserWindow, Menu, ipcMain } = electron;
 
 let mainWindow;
 let addWindow;
@@ -10,7 +10,12 @@ let addWindow;
 // Listens for app to be ready
 app.on("ready", () => {
   // Creates new window
-  mainWindow = new BrowserWindow({});
+  mainWindow = new BrowserWindow({
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
+  });
 
   // Loads HTML into window
   mainWindow.loadURL(path.join(__dirname, "windows/main-window.html"));
@@ -26,14 +31,29 @@ app.on("ready", () => {
   Menu.setApplicationMenu(mainMenu);
 });
 
+// Catches item:add
+ipcMain.on("item:add", (e, item) => {
+  mainWindow.webContents.send("item:add", item);
+  addWindow.close();
+});
+
 function handleAddWindowClick() {
   addWindow = new BrowserWindow({
     height: 200,
     title: "Add a shopping list item",
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
     width: 300,
   });
 
   addWindow.loadURL(path.join(__dirname, "windows/add-window.html"));
+
+  // Handles garbage collections
+  addWindow.on("close", () => {
+    addWindow = null;
+  });
 }
 
 // Creates menu template
@@ -60,3 +80,27 @@ const mainMenuTemplate = [
     ],
   },
 ];
+
+// If Mac, adds empty object to menu
+if (process.platform === "darwin") {
+  mainMenuTemplate.unshift({});
+}
+
+// Adds developer tools item if not in production
+if (process.env.NODE_ENV !== "production") {
+  mainMenuTemplate.push({
+    label: "Developer Tools",
+    submenu: [
+      {
+        label: "Toggle DevTools",
+        accelerator: process.platform === "darwin" ? "Command+I" : "Ctrl+I",
+        click(item, focusedWindow) {
+          focusedWindow.toggleDevTools();
+        },
+      },
+      {
+        role: "reload",
+      },
+    ],
+  });
+}
