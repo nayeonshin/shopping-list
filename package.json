@@ -1,0 +1,14 @@
+{
+  "name": "shopping-list",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Nayeon Shin",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^19.0.8"
+  }
+}
